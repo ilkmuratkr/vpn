@@ -1,8 +1,8 @@
 #!/bin/bash
-"""
-VPN Rotation System - Ana Kurulum Script
-Tüm sistemi otomatik olarak kurar ve yapılandırır
-"""
+#
+# VPN Rotation System - Ana Kurulum Script
+# Tüm sistemi otomatik olarak kurar ve yapılandırır
+#
 
 set -e
 
@@ -91,8 +91,9 @@ setup_directories() {
     touch /var/log/vpn_rotation.log
     chmod 644 /var/log/vpn_rotation.log
     
-    # Copy VPN configs
-    local source_dir="/Users/muratkara/vpn/mullvad_config_linux"
+    # Get current directory (where script is running from)
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    local source_dir="$script_dir/mullvad_config_linux"
     
     if [[ -d "$source_dir" ]]; then
         log "Mullvad konfigürasyonları kopyalanıyor..."
@@ -106,7 +107,7 @@ setup_directories() {
     fi
     
     # Copy scripts
-    cp /Users/muratkara/vpn/vpn_rotation_manager.py /usr/local/bin/
+    cp "$script_dir/vpn_rotation_manager.py" /usr/local/bin/
     
     chmod +x /usr/local/bin/vpn_rotation_manager.py
     
@@ -117,7 +118,8 @@ setup_directories() {
 setup_routing() {
     title "VPN Routing Yapılandırılıyor"
     
-    bash /Users/muratkara/vpn/simple_vpn_routing.sh
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    bash "$script_dir/simple_vpn_routing.sh"
     
     log "VPN routing yapılandırması tamamlandı"
 }

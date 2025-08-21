@@ -18,7 +18,7 @@ import requests
 import signal
 
 class VPNRotationManager:
-    def __init__(self, config_dir="/Users/muratkara/vpn/mullvad_config_linux"):
+    def __init__(self, config_dir="/etc/openvpn"):
         self.config_dir = Path(config_dir)
         self.vpn_configs = self._load_vpn_configs()
         self.blacklisted_vpns = {}  # VPN -> timestamp when blacklisted

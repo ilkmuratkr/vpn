@@ -1,8 +1,8 @@
 #!/bin/bash
-"""
-Basit VPN Routing - Herşey VPN'e, SSH/Panel Korunur
-SSH ve panel dışında TÜM TRAFİK VPN'e gider
-"""
+#
+# Basit VPN Routing - Herşey VPN'e, SSH/Panel Korunur
+# SSH ve panel dışında TÜM TRAFİK VPN'e gider
+#
 
 set -e
 

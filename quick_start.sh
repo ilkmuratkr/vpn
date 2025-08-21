@@ -1,8 +1,8 @@
 #!/bin/bash
-"""
-VPN Rotation System - Hızlı Başlatma Script'i
-Tek komutla sistemi kurar ve çalıştırır
-"""
+#
+# VPN Rotation System - Hızlı Başlatma Script'i
+# Tek komutla sistemi kurar ve çalıştırır
+#
 
 set -e
 
