@@ -1,0 +1,144 @@
+VPN ROTATION SYSTEM - KULLANIM REHBERİ
+==========================================
+
+Bu sistem, bot taramalarınızı VPN üzerinden yaparken SSH ve admin panel erişiminizi korur.
+
+ÖZELLIKLER:
+- ✅ 30 dakikada bir otomatik VPN değişimi
+- ✅ 5 dakikada bir VPN sağlık kontrolü
+- ✅ Anında VPN geçişi (zero-downtime)
+- ✅ SSH ve admin panel erişimi korunur
+- ✅ Başarısız VPN'ler 24 saat blacklist'e alınır
+- ✅ 29 farklı ülke lokasyonu destegi
+
+KURULUM:
+=========
+
+1. Root kullanıcısı olarak çalıştırın:
+   sudo bash install.sh
+
+2. Sistemi başlatın:
+   systemctl start vpn-rotation.service
+   systemctl enable vpn-rotation.service
+
+3. Durumu kontrol edin:
+   /usr/local/bin/vpn-status.sh
+
+BOT ÇALIŞTIRMA:
+===============
+
+Mevcut botlarınızı şu şekilde çalıştırın:
+
+# Nuclei taraması
+bot_wrapper.sh nuclei -t /root/nuclei-templates -u target.com
+
+# WPScan taraması  
+bot_wrapper.sh wpscan --url http://target.com --enumerate ap
+
+# Node.js botları
+bot_wrapper.sh node /path/to/your/bot.js
+
+# Özel komutlar
+bot_wrapper.sh custom "python3 /path/to/scanner.py"
+
+# Durum kontrolü
+bot_wrapper.sh status
+
+# VPN test
+bot_wrapper.sh test-vpn
+
+SİSTEM KONTROL KOMUTLARİ:
+=========================
+
+# Servis durumu
+systemctl status vpn-rotation.service
+
+# Logları görüntüle
+tail -f /var/log/vpn_rotation.log
+
+# VPN durumu
+/usr/local/bin/vpn-status.sh
+
+# Mevcut IP'leri kontrol et
+curl https://ipecho.net/plain  # Ana IP
+sudo -u botuser curl https://ipecho.net/plain  # Bot IP (VPN)
+
+SİSTEM MİMARİSİ:
+================
+
+┌─────────────────┐    ┌──────────────────┐
+│   SSH/Admin     │────│  Ana Internet    │
+│   (Port 22,     │    │  Bağlantısı      │
+│    3000)        │    │                  │
+└─────────────────┘    └──────────────────┘
+                               │
+┌─────────────────┐    ┌──────────────────┐
+│   Bot Trafiği   │────│  VPN Rotation    │
+│  (Nuclei, WP,   │    │  System          │
+│   Node.js)      │    │  (tun0/tun1)     │
+└─────────────────┘    └──────────────────┘
+
+TROUBLESHOOTİNG:
+================
+
+Sorun: "VPN interface bulunamadı"
+Çözüm: systemctl start vpn-rotation.service
+
+Sorun: "VPN routing çalışmıyor"
+Çözüm: 
+- /usr/local/bin/vpn-status.sh ile kontrol edin
+- iptables -t mangle -L VPN_ROUTING -n ile kuralları kontrol edin
+
+Sorun: "SSH bağlantısı koptu"
+Çözüm: SSH portu (22) VPN'e yönlendirilmez, admin panel (3000) de.
+
+LOG DOSYALARI:
+==============
+
+/var/log/vpn_rotation.log          - Ana VPN rotation logları
+/var/log/openvpn_tun0.log         - Primary VPN bağlantı logları  
+/var/log/openvpn_tun1.log         - Secondary VPN bağlantı logları
+journalctl -u vpn-rotation.service - Systemd service logları
+
+YAPILANDIRMA:
+=============
+
+VPN rotation süresini değiştirmek için:
+/usr/local/bin/vpn_rotation_manager.py dosyasında:
+self.rotation_interval = 30 * 60  # saniye cinsinden
+
+Sağlık kontrol süresini değiştirmek için:
+self.health_check_interval = 5 * 60  # saniye cinsinden
+
+SİSTEMİ DURDURMA:
+=================
+
+systemctl stop vpn-rotation.service
+systemctl disable vpn-rotation.service
+
+# Routing kurallarını temizlemek için:
+iptables -t mangle -F VPN_ROUTING
+iptables -t mangle -X VPN_ROUTING
+
+GÜVENLİK:
+=========
+
+- SSH erişimi mevcut IP'nizde kalır
+- Admin panel (port 3000) erişimi korunur  
+- Bot trafiği tamamen VPN üzerinden gider
+- Farklı VPN lokasyonları arasında otomatik geçiş
+- Başarısız VPN'ler otomatik blacklist
+
+PERFORMANS:
+===========
+
+- VPN değişimi 1-2 saniye içinde tamamlanır
+- Mevcut TCP bağlantıları korunur
+- Zero-downtime rotation
+- Multiple concurrent bot desteği
+
+İLETİŞİM:
+=========
+
+Sorun yaşarsanız log dosyalarını kontrol edin ve sistem durumunu 
+vpn-status.sh ile kontrol edin.

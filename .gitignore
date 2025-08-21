@@ -1,0 +1,48 @@
+# Logs
+*.log
+/var/log/
+
+# Runtime files
+*.pid
+/var/run/
+
+# Temporary files
+*.tmp
+/tmp/
+
+# Backup files
+*~
+*.bak
+backup_*/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# VPN credentials (keep secure)
+# mullvad_userpass.txt is included for convenience but should be secured
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# System files
+/etc/iptables/rules.v4.backup
+/etc/openvpn/*.log
