@@ -43,22 +43,19 @@ That's it! Your system is ready.
 
 ```bash
 # Nuclei scanning
-bot_wrapper.sh nuclei -t /root/nuclei-templates -u target.com
+nuclei -t /root/nuclei-templates -u target.com
 
 # WPScan
-bot_wrapper.sh wpscan --url http://target.com --enumerate ap
+wpscan --url http://target.com --enumerate ap
 
 # Node.js bots
-bot_wrapper.sh node /path/to/your/bot.js
+node /path/to/your/bot.js
 
-# Custom commands
-bot_wrapper.sh custom "python3 /path/to/scanner.py"
+# Python scanners
+python3 /path/to/scanner.py
 
-# Check status
-bot_wrapper.sh status
-
-# Test VPN
-bot_wrapper.sh test-vpn
+# Any HTTP tool - automatically goes through VPN
+curl http://target.com
 ```
 
 ## 📊 System Control
@@ -81,8 +78,7 @@ sudo -u botuser curl https://ipecho.net/plain    # Bot IP (VPN)
 ## 📁 File Structure
 
 - **`vpn_rotation_manager.py`** - Main VPN management system
-- **`setup_vpn_routing.sh`** - Network routing configuration
-- **`bot_wrapper.sh`** - Bot execution wrapper
+- **`simple_vpn_routing.sh`** - Simple network routing (SSH/Panel protected)
 - **`install.sh`** - Full automatic installation
 - **`quick_start.sh`** - One-command setup and start
 - **`KULLANIM_REHBERI.txt`** - Detailed usage guide (Turkish)
@@ -135,7 +131,7 @@ systemctl enable vpn-rotation.service
 **Problem:** "VPN routing not working"
 **Solution:** 
 - Check with `/usr/local/bin/vpn-status.sh`
-- Verify rules: `iptables -t mangle -L VPN_ROUTING -n`
+- Verify rules: `iptables -t mangle -L VPN_ALL -n`
 
 **Problem:** "SSH connection lost"
 **Solution:** SSH port (22) is never routed through VPN

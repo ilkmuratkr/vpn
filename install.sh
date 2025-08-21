@@ -107,10 +107,8 @@ setup_directories() {
     
     # Copy scripts
     cp /Users/muratkara/vpn/vpn_rotation_manager.py /usr/local/bin/
-    cp /Users/muratkara/vpn/bot_wrapper.sh /usr/local/bin/
     
     chmod +x /usr/local/bin/vpn_rotation_manager.py
-    chmod +x /usr/local/bin/bot_wrapper.sh
     
     log "Script'ler /usr/local/bin/ dizinine kopyalandı"
 }
@@ -119,7 +117,7 @@ setup_directories() {
 setup_routing() {
     title "VPN Routing Yapılandırılıyor"
     
-    bash /Users/muratkara/vpn/setup_vpn_routing.sh
+    bash /Users/muratkara/vpn/simple_vpn_routing.sh
     
     log "VPN routing yapılandırması tamamlandı"
 }
@@ -133,7 +131,6 @@ verify_installation() {
     # Check files
     local required_files=(
         "/usr/local/bin/vpn_rotation_manager.py"
-        "/usr/local/bin/bot_wrapper.sh"
         "/etc/openvpn/mullvad_userpass.txt"
         "/etc/systemd/system/vpn-rotation.service"
         "/usr/local/bin/vpn-status.sh"
@@ -188,17 +185,13 @@ show_instructions() {
     
     echo -e "${BOLD}Durum Kontrolü:${NC}"
     echo "/usr/local/bin/vpn-status.sh"
-    echo "bot_wrapper.sh status"
     echo ""
     
     echo -e "${BOLD}Bot Çalıştırma Örnekleri:${NC}"
-    echo "bot_wrapper.sh nuclei -t /root/nuclei-templates -u target.com"
-    echo "bot_wrapper.sh wpscan --url http://target.com"
-    echo "bot_wrapper.sh node /path/to/your/bot.js"
-    echo ""
-    
-    echo -e "${BOLD}VPN Test:${NC}"
-    echo "bot_wrapper.sh test-vpn"
+    echo "nuclei -t /root/nuclei-templates -u target.com"
+    echo "wpscan --url http://target.com"
+    echo "node /path/to/your/bot.js"
+    echo "python3 /path/to/scanner.py"
     echo ""
     
     echo -e "${BOLD}Loglar:${NC}"

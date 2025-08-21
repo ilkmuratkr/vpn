@@ -118,14 +118,13 @@ echo -e "${BOLD}📋 Sistem Durumu:${NC}"
 
 echo ""
 echo -e "${BOLD}🤖 Bot Çalıştırma Örnekleri:${NC}"
-echo "bot_wrapper.sh nuclei -t /root/nuclei-templates -u target.com"
-echo "bot_wrapper.sh wpscan --url http://target.com"
-echo "bot_wrapper.sh node /path/to/your/bot.js"
+echo "nuclei -t /root/nuclei-templates -u target.com"
+echo "wpscan --url http://target.com"
+echo "node /path/to/your/bot.js"
+echo "python3 /path/to/scanner.py"
 echo ""
 
 echo -e "${BOLD}📊 Yararlı Komutlar:${NC}"
-echo "bot_wrapper.sh status           # Sistem durumu"
-echo "bot_wrapper.sh test-vpn         # VPN testi"
 echo "/usr/local/bin/vpn-status.sh    # Detaylı durum"
 echo "tail -f /var/log/vpn_rotation.log  # Canlı loglar"
 echo ""
@@ -135,15 +134,7 @@ echo ""
 echo -e "${YELLOW}💡 İpucu: SSH ve admin paneli ($normal_ip:3000) erişimi korundu.${NC}"
 echo -e "${YELLOW}   Bot trafiği artık VPN ($vpn_ip) üzerinden gidiyor.${NC}"
 
-# Optional: Run a quick test
-echo ""
-read -p "Hızlı VPN testi yapmak ister misiniz? (y/N): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo ""
-    echo -e "${BLUE}🧪 VPN testi çalıştırılıyor...${NC}"
-    bot_wrapper.sh test-vpn
-fi
+
 
 echo ""
 echo -e "${BOLD}${GREEN}🚀 Başarılı! Sisteminiz hazır.${NC}"

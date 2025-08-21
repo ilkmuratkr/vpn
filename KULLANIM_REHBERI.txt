@@ -27,25 +27,22 @@ KURULUM:
 BOT ÇALIŞTIRMA:
 ===============
 
-Mevcut botlarınızı şu şekilde çalıştırın:
+Botlarınızı normal şekilde çalıştırın, otomatik VPN'e gidecek:
 
 # Nuclei taraması
-bot_wrapper.sh nuclei -t /root/nuclei-templates -u target.com
+nuclei -t /root/nuclei-templates -u target.com
 
 # WPScan taraması  
-bot_wrapper.sh wpscan --url http://target.com --enumerate ap
+wpscan --url http://target.com --enumerate ap
 
 # Node.js botları
-bot_wrapper.sh node /path/to/your/bot.js
+node /path/to/your/bot.js
 
-# Özel komutlar
-bot_wrapper.sh custom "python3 /path/to/scanner.py"
+# Python tarayıcıları
+python3 /path/to/scanner.py
 
-# Durum kontrolü
-bot_wrapper.sh status
-
-# VPN test
-bot_wrapper.sh test-vpn
+# Herhangi bir HTTP tool
+curl http://target.com
 
 SİSTEM KONTROL KOMUTLARİ:
 =========================
