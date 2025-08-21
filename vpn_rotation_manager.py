@@ -19,17 +19,7 @@ import signal
 
 class VPNRotationManager:
     def __init__(self, config_dir="/etc/openvpn"):
-        self.config_dir = Path(config_dir)
-        self.vpn_configs = self._load_vpn_configs()
-        self.blacklisted_vpns = {}  # VPN -> timestamp when blacklisted
-        self.current_primary = None
-        self.current_secondary = None
-        self.rotation_interval = 30 * 60  # 30 minutes
-        self.health_check_interval = 5 * 60  # 5 minutes
-        self.blacklist_duration = 24 * 60 * 60  # 24 hours
-        self.running = False
-        
-        # Logging setup
+        # Logging setup FIRST
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(levelname)s - %(message)s',
@@ -39,6 +29,17 @@ class VPNRotationManager:
             ]
         )
         self.logger = logging.getLogger(__name__)
+        
+        # Now initialize other attributes
+        self.config_dir = Path(config_dir)
+        self.vpn_configs = self._load_vpn_configs()
+        self.blacklisted_vpns = {}  # VPN -> timestamp when blacklisted
+        self.current_primary = None
+        self.current_secondary = None
+        self.rotation_interval = 30 * 60  # 30 minutes
+        self.health_check_interval = 5 * 60  # 5 minutes
+        self.blacklist_duration = 24 * 60 * 60  # 24 hours
+        self.running = False
         
         # Signal handlers for graceful shutdown
         signal.signal(signal.SIGTERM, self._signal_handler)
