@@ -114,6 +114,75 @@ setup_directories() {
     log "Script'ler /usr/local/bin/ dizinine kopyalandı"
 }
 
+# Create botuser
+create_botuser() {
+    title "Bot Kullanıcısı Oluşturuluyor"
+    
+    if ! id "botuser" &>/dev/null; then
+        useradd -r -s /bin/false botuser
+        log "botuser oluşturuldu"
+    else
+        log "botuser zaten mevcut"
+    fi
+}
+
+# Create systemd services
+create_services() {
+    title "Systemd Servisleri Oluşturuluyor"
+    
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    
+    # VPN rotation service
+    cat > /etc/systemd/system/vpn-rotation.service << EOF
+[Unit]
+Description=VPN Rotation Manager
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/python3 /usr/local/bin/vpn_rotation_manager.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    # VPN status script
+    cat > /usr/local/bin/vpn-status.sh << 'EOF'
+#!/bin/bash
+echo "=== VPN Rotation Status ==="
+echo "Service Status:"
+systemctl status vpn-rotation.service --no-pager -l | head -10
+
+echo -e "\nVPN Interfaces:"
+ip addr show tun0 2>/dev/null || echo "tun0: Not connected"
+ip addr show tun1 2>/dev/null || echo "tun1: Not connected"
+
+echo -e "\nRouting Tables:"
+echo "Main table default route:"
+ip route show default
+
+echo -e "\nVPN table routes:"
+ip route show table vpn_table 2>/dev/null || echo "VPN table empty"
+
+echo -e "\nFirewall rules:"
+iptables -t mangle -L VPN_ALL -n --line-numbers 2>/dev/null || echo "No VPN_ALL chain"
+
+echo -e "\nRecent logs:"
+tail -10 /var/log/vpn_rotation.log 2>/dev/null || echo "No logs yet"
+EOF
+
+    chmod +x /usr/local/bin/vpn-status.sh
+    
+    systemctl daemon-reload
+    systemctl enable vpn-rotation.service
+    
+    log "Systemd servisleri oluşturuldu"
+}
+
 # Run routing setup
 setup_routing() {
     title "VPN Routing Yapılandırılıyor"
@@ -164,7 +233,7 @@ verify_installation() {
     fi
     
     # Check routing tables
-    if grep -q "vpn_primary" /etc/iproute2/rt_tables; then
+    if grep -q "vpn_table" /etc/iproute2/rt_tables; then
         log "✓ Routing tables konfigürasyonu"
     else
         error "✗ Routing tables problemi"
@@ -221,6 +290,8 @@ main() {
     backup_config
     install_packages
     setup_directories
+    create_botuser
+    create_services
     setup_routing
     
     if verify_installation; then
