@@ -188,9 +188,12 @@ setup_routing() {
     title "VPN Routing Yapılandırılıyor"
     
     local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    bash "$script_dir/simple_vpn_routing.sh"
     
-    log "VPN routing yapılandırması tamamlandı"
+    if bash "$script_dir/simple_vpn_routing.sh"; then
+        log "VPN routing yapılandırması tamamlandı"
+    else
+        warn "VPN routing'de uyarılar var ama devam ediliyor"
+    fi
 }
 
 # Verify installation

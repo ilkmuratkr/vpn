@@ -30,6 +30,10 @@ log "🚀 Basit VPN Routing kuruluyor..."
 
 # 1. Get current connection info
 SSH_CLIENT_IP=$(echo $SSH_CLIENT | cut -d' ' -f1)
+if [[ -z "$SSH_CLIENT_IP" ]]; then
+    # Try alternative methods
+    SSH_CLIENT_IP=$(who am i | awk '{print $5}' | tr -d '()')
+fi
 CURRENT_IP=$(hostname -I | awk '{print $1}')
 MAIN_INTERFACE=$(ip route | grep default | head -1 | awk '{print $5}')
 
@@ -41,6 +45,9 @@ log "   Ana Interface: $MAIN_INTERFACE"
 # 2. Setup routing table
 if ! grep -q "vpn_table" /etc/iproute2/rt_tables; then
     echo "200 vpn_table" >> /etc/iproute2/rt_tables
+    log "✅ VPN routing table eklendi"
+else
+    log "⚠️  VPN routing table zaten mevcut"
 fi
 
 # 3. Clear existing rules
@@ -77,7 +84,9 @@ log "🔄 VPN routing ekleniyor..."
 iptables -t mangle -A VPN_ALL -j MARK --set-mark 100
 
 # 7. Marked traffic'i VPN table'a yönlendir
-ip rule add fwmark 100 table vpn_table priority 100
+ip rule add fwmark 100 table vpn_table priority 100 2>/dev/null || {
+    log "⚠️  Routing rule zaten mevcut (normal)"
+}
 
 log "✅ VPN routing kuruldu!"
 log ""
